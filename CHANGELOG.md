@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.2.0](https://github.com/GlueOps/proxmox-images-chisel/compare/v0.1.1...v0.2.0) (2026-07-31)
+
+
+### ⚠ BREAKING CHANGES
+
+* rename image to tools-api-k3d-lb-chisel-debian-13-amd64 ([#10](https://github.com/GlueOps/proxmox-images-chisel/issues/10))
+
+### Features
+
+* rename image to tools-api-k3d-lb-chisel-debian-13-amd64 ([#10](https://github.com/GlueOps/proxmox-images-chisel/issues/10)) ([9e9a67a](https://github.com/GlueOps/proxmox-images-chisel/commit/9e9a67a385e8e21b99de0f592999af96670d193d))
+
 ## [0.1.1](https://github.com/GlueOps/proxmox-images-chisel/compare/v0.1.0...v0.1.1) (2026-07-31)
 
 
