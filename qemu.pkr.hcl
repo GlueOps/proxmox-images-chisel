@@ -3,8 +3,9 @@ variable "image_password" {
 }
 
 variable "chisel_image" {
-  type    = string
-  default = "docker.io/jpillora/chisel:1"
+  type = string
+  # renovate: datasource=docker depName=docker.io/jpillora/chisel
+  default = "docker.io/jpillora/chisel:1.11.8@sha256:51d034146bb06e03a493646e63e61d42fd3b5da914c7180c92ba603865768633"
 }
 
 source "qemu" "qemu-amd64" {
@@ -45,6 +46,10 @@ build {
       "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y qemu-guest-agent docker.io",
       "sudo systemctl enable qemu-guest-agent docker",
       "sudo docker pull ${var.chisel_image}",
+      # A digest pull doesn't create the floating tag consumers reference in
+      # their `docker run` (tools-api uses docker.io/jpillora/chisel:1) — tag it
+      # so the preloaded image is actually used instead of re-pulled at boot.
+      "sudo docker tag ${var.chisel_image} docker.io/jpillora/chisel:1",
 
       # Clean up apt
       "sudo apt-get -y autoremove",
