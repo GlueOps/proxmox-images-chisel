@@ -33,6 +33,11 @@ jobs:
           # libguestfs needs a readable kernel and (ideally) /dev/kvm
           sudo chmod +r /boot/vmlinuz-* || true
           sudo chmod 666 /dev/kvm || true
+          # Ubuntu 24.04 runners: AppArmor's unprivileged-userns restriction breaks
+          # passt (libguestfs's appliance networking). Relax it AND remove passt so
+          # libguestfs falls back to QEMU user-mode networking either way.
+          sudo sysctl -w kernel.apparmor_restrict_unprivileged_userns=0 || true
+          sudo apt-get remove -y passt || true
 
       - name: Download Debian genericcloud base image and verify checksum
         run: |
