@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/GlueOps/proxmox-images-chisel/compare/v0.1.0...v0.1.1) (2026-07-31)
+
+
+### Bug Fixes
+
+* pin chisel image to tag+digest, renovate-managed; drop workflow input ([#8](https://github.com/GlueOps/proxmox-images-chisel/issues/8)) ([119ab22](https://github.com/GlueOps/proxmox-images-chisel/commit/119ab2226e62b2e645213766bd515864305c891e))
+
 ## 0.1.0 (2026-07-31)
 
 
