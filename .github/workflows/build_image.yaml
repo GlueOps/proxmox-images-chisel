@@ -1,0 +1,88 @@
+name: Build and Release Chisel Proxmox Image
+
+on:
+  workflow_dispatch:
+    inputs:
+      chisel_image:
+        description: 'Chisel docker image to preload'
+        required: false
+        default: 'docker.io/jpillora/chisel:1'
+  schedule:
+    # Weekly rebuild picks up Debian point releases and security updates
+    - cron: '0 6 * * 1'
+
+permissions:
+  contents: write
+
+env:
+  IMAGE_NAME: debian-13-chisel-amd64
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      CHISEL_IMAGE: ${{ inputs.chisel_image || 'docker.io/jpillora/chisel:1' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Install libguestfs
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libguestfs-tools qemu-utils
+          # libguestfs needs a readable kernel and (ideally) /dev/kvm
+          sudo chmod +r /boot/vmlinuz-* || true
+          sudo chmod 666 /dev/kvm || true
+
+      - name: Download Debian genericcloud base image and verify checksum
+        run: |
+          BASE_URL=https://cloud.debian.org/images/cloud/trixie/latest
+          curl -fsSLo base.qcow2 "$BASE_URL/debian-13-genericcloud-amd64.qcow2"
+          curl -fsSLo SHA512SUMS.debian "$BASE_URL/SHA512SUMS"
+          grep ' debian-13-genericcloud-amd64.qcow2$' SHA512SUMS.debian | sed 's| debian-13-genericcloud-amd64.qcow2| base.qcow2|' | sha512sum -c -
+
+      - name: Save chisel docker image as tarball
+        run: |
+          docker pull "$CHISEL_IMAGE"
+          docker save -o chisel-image.tar "$CHISEL_IMAGE"
+          ls -lh chisel-image.tar
+
+      - name: Customize image (qemu-guest-agent + docker + preloaded chisel image)
+        env:
+          LIBGUESTFS_BACKEND: direct
+        run: |
+          sudo -E virt-customize -a base.qcow2 \
+            --install qemu-guest-agent,docker.io \
+            --run-command 'systemctl enable qemu-guest-agent docker' \
+            --mkdir /opt/glueops \
+            --copy-in chisel-image.tar:/opt/glueops/ \
+            --firstboot-command 'docker load -i /opt/glueops/chisel-image.tar && rm -f /opt/glueops/chisel-image.tar' \
+            --run-command 'truncate -s 0 /etc/machine-id && rm -f /var/lib/dbus/machine-id'
+
+      - name: Sparsify and compress
+        env:
+          LIBGUESTFS_BACKEND: direct
+        run: |
+          sudo -E virt-sparsify --compress base.qcow2 "${IMAGE_NAME}.qcow2"
+          qemu-img info "${IMAGE_NAME}.qcow2"
+          ls -lh "${IMAGE_NAME}.qcow2"
+          # GitHub release assets are capped at 2 GiB per file — fail loudly if we ever outgrow it
+          test "$(stat -c%s "${IMAGE_NAME}.qcow2")" -lt 2000000000
+
+      - name: Generate checksums
+        run: sha256sum "${IMAGE_NAME}.qcow2" > SHA256SUMS
+
+      - name: Create GitHub release with image asset
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v$(date -u +%Y.%m.%d.%H%M)"
+          gh release create "$TAG" --latest --title "$TAG" --notes "Minimal Proxmox VM image for GlueOps chisel exit nodes (dev/k3d load balancers).
+
+          - Base: debian-13-genericcloud-amd64 (trixie/latest at build time, checksum-verified)
+          - Baked in: qemu-guest-agent (enabled), docker engine (enabled), preloaded ${CHISEL_IMAGE} (docker-loaded on first boot)
+          - Provisioners only need a cloud-init runcmd like: docker run -d --restart always -p 9090:9090 -p 443:443 -p 80:80 ${CHISEL_IMAGE} server --reverse --port=9090 --auth='<user>:<pass>'
+          - machine-id cleared so every clone gets a unique identity (and DHCP lease)
+
+          Stable download URL: https://github.com/${GITHUB_REPOSITORY}/releases/latest/download/${IMAGE_NAME}.qcow2" \
+            "${IMAGE_NAME}.qcow2" SHA256SUMS
