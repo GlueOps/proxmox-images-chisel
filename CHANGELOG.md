@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/GlueOps/proxmox-images-chisel/compare/v0.2.0...v0.3.0) (2026-07-31)
+
+
+### Features
+
+* rebuild image to exercise checksum-keyed cache refresh ([#12](https://github.com/GlueOps/proxmox-images-chisel/issues/12)) ([42f780d](https://github.com/GlueOps/proxmox-images-chisel/commit/42f780d0f528b15ecb39c2da7f95f5f0b09d9c67))
+
 ## [0.2.0](https://github.com/GlueOps/proxmox-images-chisel/compare/v0.1.1...v0.2.0) (2026-07-31)
 
 
