@@ -51,7 +51,7 @@ jobs:
         env:
           LIBGUESTFS_BACKEND: direct
         run: |
-          sudo -E virt-customize -a base.qcow2 \
+          virt-customize -a base.qcow2 \
             --install qemu-guest-agent,docker.io \
             --run-command 'systemctl enable qemu-guest-agent docker' \
             --mkdir /opt/glueops \
@@ -63,7 +63,7 @@ jobs:
         env:
           LIBGUESTFS_BACKEND: direct
         run: |
-          sudo -E virt-sparsify --compress base.qcow2 "${IMAGE_NAME}.qcow2"
+          virt-sparsify --compress base.qcow2 "${IMAGE_NAME}.qcow2"
           qemu-img info "${IMAGE_NAME}.qcow2"
           ls -lh "${IMAGE_NAME}.qcow2"
           # GitHub release assets are capped at 2 GiB per file — fail loudly if we ever outgrow it
