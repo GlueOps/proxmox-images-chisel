@@ -31,15 +31,18 @@ runcmd:
   - docker run -d --restart always -p 9090:9090 -p 443:443 -p 80:80 docker.io/jpillora/chisel:1 server --reverse --port=9090 --auth='<user>:<pass>'
 ```
 
-## Building
+## Building & Releasing (semver via release-please)
 
-`.github/workflows/build_image.yaml` builds and releases the image:
+Releases follow semver, driven by conventional commits:
 
-- **Weekly** (Monday 06:00 UTC) — picks up Debian point releases and security updates
-- **Manually** — `gh workflow run build_image.yaml` (optional input: `chisel_image` to preload a different chisel image)
+1. Merge a `feat:`/`fix:` PR to `main` — release-please opens/updates a release PR
+2. Merge the release PR — release-please publishes `vX.Y.Z` as a **prerelease**
+3. The `Packer build qemu` workflow triggers on publish, builds the image, uploads `debian-13-chisel-amd64.qcow2` + `SHA256SUMS`, then flips the release to a full release marked **latest**
 
-Build-time instance identity is fully reset (cloud-init clean, ssh host keys removed, machine-id cleared, build password locked), so every Proxmox clone provisions fresh against the NoCloud ISO tools-api attaches.
+Because "latest" is only assigned after assets upload successfully, `releases/latest/download/...` always serves a release that actually has the image — a failed build leaves latest pointing at the previous good release.
 
-Each run creates a date-tagged release (`vYYYY.MM.DD.HHMM`) marked as latest, so the `releases/latest/download` URL always serves the newest image while older releases remain available for rollback (repoint by downloading a specific tag's asset to your own mirror if you need to pin).
+To rebuild an existing tag (e.g. to pick up Debian point releases): `gh workflow run "Packer build qemu" -f tag=vX.Y.Z` (assets are re-uploaded with `--clobber`). For a fresh versioned rebuild, land a `fix:` commit (e.g. bump nothing but the changelog) and ride the release train.
 
 The build uses packer's QEMU builder on a stock GitHub runner (KVM-accelerated), mirroring [glueops/codespaces](https://github.com/glueops/codespaces)'s image pipeline minus the S3 upload and multi-part release splitting — this image fits in a single release asset.
+
+Build-time instance identity is fully reset (cloud-init clean, ssh host keys removed, machine-id cleared, build password locked), so every Proxmox clone provisions fresh against the NoCloud ISO tools-api attaches.
