@@ -18,7 +18,7 @@ The image is intentionally small (single GitHub release asset, well under the 2 
 
 ```bash
 PROXMOX_DOWNLOAD_SERVER_URL=https://github.com/GlueOps/proxmox-images-chisel/releases/latest/download
-K3D_LB_VM_IMAGE=debian-13-chisel-amd64
+K3D_LB_VM_IMAGE=tools-api-k3d-lb-chisel-debian-13-amd64
 ```
 
 The Proxmox node downloads `<base>/<image>.qcow2` itself (via its `download-url` API, which follows GitHub's redirect to the release asset), so nodes need HTTPS egress to github.com. `SHA256SUMS` is published alongside each release.
@@ -37,7 +37,7 @@ Releases follow semver, driven by conventional commits:
 
 1. Merge a `feat:`/`fix:` PR to `main` — release-please opens/updates a release PR
 2. Merge the release PR — release-please publishes `vX.Y.Z` as a **prerelease**
-3. The `Packer build qemu` workflow triggers on publish, builds the image, uploads `debian-13-chisel-amd64.qcow2` + `SHA256SUMS`, then flips the release to a full release marked **latest**
+3. The `Packer build qemu` workflow triggers on publish, builds the image, uploads `tools-api-k3d-lb-chisel-debian-13-amd64.qcow2` + `SHA256SUMS`, then flips the release to a full release marked **latest**
 
 Because "latest" is only assigned after assets upload successfully, `releases/latest/download/...` always serves a release that actually has the image — a failed build leaves latest pointing at the previous good release.
 

@@ -16,7 +16,7 @@ permissions:
   contents: write
 
 env:
-  IMAGE_NAME: debian-13-chisel-amd64
+  IMAGE_NAME: tools-api-k3d-lb-chisel-debian-13-amd64
 
 jobs:
   build:
