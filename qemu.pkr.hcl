@@ -18,7 +18,7 @@ source "qemu" "qemu-amd64" {
   # at provision time, and Proxmox can't shrink — so this must stay below any slot.
   disk_size        = "4096M"
   format           = "qcow2"
-  vm_name          = "debian-13-chisel-amd64.qcow2"
+  vm_name          = "tools-api-k3d-lb-chisel-debian-13-amd64.qcow2"
   ssh_username     = "debian"
   ssh_password     = "${var.image_password}"
   shutdown_command = "sudo fstrim -av && sudo shutdown -P now"
@@ -73,11 +73,11 @@ build {
 
   post-processor "shell-local" {
     inline = [
-      "qemu-img convert -O qcow2 -c images/debian-13-chisel-amd64.qcow2 images/debian-13-chisel-amd64-compressed.qcow2",
+      "qemu-img convert -O qcow2 -c images/tools-api-k3d-lb-chisel-debian-13-amd64.qcow2 images/tools-api-k3d-lb-chisel-debian-13-amd64-compressed.qcow2",
       "rm user-data",
       "rm meta-data",
-      "rm images/debian-13-chisel-amd64.qcow2",
-      "mv images/debian-13-chisel-amd64-compressed.qcow2 images/debian-13-chisel-amd64.qcow2"
+      "rm images/tools-api-k3d-lb-chisel-debian-13-amd64.qcow2",
+      "mv images/tools-api-k3d-lb-chisel-debian-13-amd64-compressed.qcow2 images/tools-api-k3d-lb-chisel-debian-13-amd64.qcow2"
     ]
   }
 }
