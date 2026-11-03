@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.4.0](https://github.com/GlueOps/proxmox-images-chisel/compare/v0.3.0...v0.4.0) (2026-11-03)
+
+
+### Features
+
+* **deps:** update dependency packer to v1.16.1 ([#19](https://github.com/GlueOps/proxmox-images-chisel/issues/19)) ([18ec623](https://github.com/GlueOps/proxmox-images-chisel/commit/18ec6236289157d546edf13ee1bfcdf8e27a7e5a))
+* **deps:** update docker.io/jpillora/chisel docker tag to v1.12.1 ([#20](https://github.com/GlueOps/proxmox-images-chisel/issues/20)) ([e659a61](https://github.com/GlueOps/proxmox-images-chisel/commit/e659a61391cc8e713b200bf736d1d4c1248e797f))
+
+
+### Bug Fixes
+
+* running apt update w/ apt upgrade on image creation to ensure latest patches ([#22](https://github.com/GlueOps/proxmox-images-chisel/issues/22)) ([22dec5b](https://github.com/GlueOps/proxmox-images-chisel/commit/22dec5b5b30e17170236ee54ab2a932f4e3e60a3))
+
 ## [0.3.0](https://github.com/GlueOps/proxmox-images-chisel/compare/v0.2.0...v0.3.0) (2026-07-31)
 
 
