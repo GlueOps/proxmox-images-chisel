@@ -42,7 +42,7 @@ build {
       "cloud-init status --wait || true",
 
       # Bake in everything a chisel exit node needs at boot
-      "sudo apt-get update",
+      "sudo apt update && sudo apt dist-upgrade -y",
       "sudo DEBIAN_FRONTEND=noninteractive apt-get install -y qemu-guest-agent docker.io",
       "sudo systemctl enable qemu-guest-agent docker",
       "sudo docker pull ${var.chisel_image}",
