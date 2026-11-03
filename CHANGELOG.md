@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.1](https://github.com/GlueOps/proxmox-images-chisel/compare/v0.4.0...v0.4.1) (2026-11-03)
+
+
+### Bug Fixes
+
+* run the image's dist-upgrade non-interactively ([#23](https://github.com/GlueOps/proxmox-images-chisel/issues/23)) ([94f36d0](https://github.com/GlueOps/proxmox-images-chisel/commit/94f36d0233b0cd95a53759a4e7adeadc0ff8af47))
+
 ## [0.4.0](https://github.com/GlueOps/proxmox-images-chisel/compare/v0.3.0...v0.4.0) (2026-11-03)
 
 
