@@ -5,7 +5,7 @@ variable "image_password" {
 variable "chisel_image" {
   type = string
   # renovate: datasource=docker depName=docker.io/jpillora/chisel
-  default = "docker.io/jpillora/chisel:1.12.1@sha256:1997d8106270ee67784a93b6bf1a45435887ac67c492230ccb274ae63f03438e"
+  default = "docker.io/jpillora/chisel:1.13.0@sha256:e3e1f6e3563a643ff2c484e110685144c4a24b8fe5711cb7a0d236a4e3080d97"
 }
 
 source "qemu" "qemu-amd64" {
